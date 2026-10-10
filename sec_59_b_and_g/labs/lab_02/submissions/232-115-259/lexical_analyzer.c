@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
     while ((c = fgetc(input))!= EOF) {
         if (c == ' ' || c == '\t' || c == '\r' || c == '\n') continue;
 
-        // comments
+       
         if (c == '/') {
             int nxt = fgetc(input);
             if (nxt == '/') {
@@ -51,7 +51,7 @@ int main(int argc, char **argv) {
             }
         }
 
-        // identifier / keyword
+        
         if (isalpha(c) || c == '_') {
             char lex[129]; int len = 0;
             lex[len++] = (char)c;
@@ -65,7 +65,7 @@ int main(int argc, char **argv) {
             continue;
         }
 
-        // integer
+        
         if (isdigit(c)) {
             char lex[129]; int len = 0;
             lex[len++] = (char)c;
@@ -78,7 +78,7 @@ int main(int argc, char **argv) {
             continue;
         }
 
-        // two-char operators
+        
         if (c == '=' || c == '!' || c == '<' || c == '>' || c == '&' || c == '|') {
             int nxt = fgetc(input);
             if (c == '=' && nxt == '=') { printf("==,RELATIONAL_OPERATOR\n"); continue; }
