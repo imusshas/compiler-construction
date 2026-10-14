@@ -2,8 +2,8 @@
 
 Replace STUDENT_ID and SECTION below.
 
-Student ID: STUDENT_ID
-Section: SECTION
+Student ID: 232-115-266
+Section: G
 
 ## Token sequence for public.c
 
