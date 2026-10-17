@@ -6,7 +6,7 @@ Student ID: 232-115-277
 Section: G
 
 ## Token sequence for public.c
-
+```text
 int,KEYWORD
 main,IDENTIFIER
 (,DELIMITER
@@ -64,4 +64,5 @@ return,KEYWORD
 ;,DELIMITER
 },DELIMITER
 },DELIMITER
+```
 
