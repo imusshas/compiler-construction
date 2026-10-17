@@ -1,37 +1,47 @@
-/* Lab 02: Lexical Analyzer
-   Reads the input filename from argv[1].
-   Prints one lexeme,TOKEN line per token.
-*/
-
 #include <stdio.h>
-#include <ctype.h>
-#include <string.h>
-
-#define MAX_TOKEN 4096
 
 int is_letter(int c) {
     return (c >= 'A' && c <= 'Z') ||
-           (c >= 'a' && c <= 'z') || c == '_';
+           (c >= 'a' && c <= 'z');
 }
 
 int is_digit(int c) {
     return c >= '0' && c <= '9';
 }
 
+int is_start(int c) {
+    return is_letter(c) || c == '_';
+}
+
+int is_part(int c) {
+    return is_start(c) || is_digit(c);
+}
+
+int is_space(int c) {
+    return c == ' ' || c == '\t' ||
+           c == '\n' || c == '\r' ||
+           c == '\v' || c == '\f';
+}
+
 int is_keyword(const char *s) {
-    const char *keywords[] = {
+    const char *words[] = {
         "int", "if", "else", "while", "return"
     };
 
     for (int i = 0; i < 5; i++) {
-        if (strcmp(s, keywords[i]) == 0)
+        int j = 0;
+        while (s[j] == words[i][j] && s[j] != '\0') {
+            j++;
+        }
+        if (s[j] == '\0' && words[i][j] == '\0') {
             return 1;
+        }
     }
     return 0;
 }
 
-void print_token(const char *lexeme, const char *type) {
-    printf("%s,%s\n", lexeme, type);
+void emit(const char *lexeme, const char *token) {
+    printf("%s,%s\n", lexeme, token);
 }
 
 int main(int argc, char **argv) {
@@ -41,7 +51,6 @@ int main(int argc, char **argv) {
     }
 
     FILE *input = fopen(argv[1], "rb");
-
     if (input == NULL) {
         perror("input");
         return 2;
@@ -50,65 +59,60 @@ int main(int argc, char **argv) {
     int c;
 
     while ((c = fgetc(input)) != EOF) {
-
-        /* Skip whitespace */
-        if (isspace((unsigned char)c))
-            continue;
-
-        char token[MAX_TOKEN];
-        int len = 0;
-        token[len++] = (char)c;
-        token[len] = '\0';
-
-        /* Identifier or keyword */
-        if (is_letter(c)) {
-            while ((c = fgetc(input)) != EOF &&
-                   (is_letter(c) || is_digit(c))) {
-                if (len < MAX_TOKEN - 1)
-                    token[len++] = (char)c;
-            }
-
-            if (c != EOF)
-                ungetc(c, input);
-
-            token[len] = '\0';
-
-            if (is_keyword(token))
-                print_token(token, "KEYWORD");
-            else
-                print_token(token, "IDENTIFIER");
-
+        if (is_space(c)) {
             continue;
         }
 
-        /* Integer */
+        if (is_start(c)) {
+            char word[129];
+            int n = 0;
+
+            do {
+                if (n < 128) {
+                    word[n++] = (char)c;
+                }
+                c = fgetc(input);
+            } while (c != EOF && is_part(c));
+
+            if (c != EOF) {
+                ungetc(c, input);
+            }
+
+            word[n] = '\0';
+            emit(word, is_keyword(word) ? "KEYWORD" : "IDENTIFIER");
+            continue;
+        }
+
         if (is_digit(c)) {
-            while ((c = fgetc(input)) != EOF && is_digit(c)) {
-                if (len < MAX_TOKEN - 1)
-                    token[len++] = (char)c;
+            char number[129];
+            int n = 0;
+
+            do {
+                if (n < 128) {
+                    number[n++] = (char)c;
+                }
+                c = fgetc(input);
+            } while (c != EOF && is_digit(c));
+
+            if (c != EOF) {
+                ungetc(c, input);
             }
 
-            if (c != EOF)
-                ungetc(c, input);
-
-            token[len] = '\0';
-            print_token(token, "INTEGER");
+            number[n] = '\0';
+            emit(number, "INTEGER");
             continue;
         }
 
-        /* Comments and division operator */
         if (c == '/') {
-            int next = fgetc(input);
+            int d = fgetc(input);
 
-            if (next == '/') {
-                /* Skip single-line comment */
-                while ((c = fgetc(input)) != EOF && c != '\n')
-                    ;
+            if (d == '/') {
+                while ((c = fgetc(input)) != EOF && c != '\n') {
+                }
                 continue;
             }
 
-            if (next == '*') {
-                /* Skip block comment */
+            if (d == '*') {
                 int previous = 0;
                 int closed = 0;
 
@@ -121,84 +125,80 @@ int main(int argc, char **argv) {
                 }
 
                 if (!closed) {
-                    fprintf(stderr, "Error: unclosed block comment\n");
+                    fprintf(stderr, "error: unclosed block comment\n");
                     fclose(input);
-                    return 1;
+                    return 2;
                 }
-
                 continue;
             }
 
-            if (next != EOF)
-                ungetc(next, input);
+            if (d != EOF) {
+                ungetc(d, input);
+            }
 
-            print_token("/", "ARITHMETIC_OPERATOR");
+            emit("/", "ARITHMETIC_OPERATOR");
             continue;
         }
 
-        /* Assignment and relational operators */
-        if (c == '=' || c == '!' || c == '<' || c == '>') {
-            int next = fgetc(input);
+        if (c == '=' || c == '!' || c == '<' || c == '>' ||
+            c == '&' || c == '|') {
+            int d = fgetc(input);
 
-            if (next == '=') {
-                token[len++] = '=';
-                token[len] = '\0';
-
-                if (c == '=')
-                    print_token(token, "RELATIONAL_OPERATOR");
-                else if (c == '!')
-                    print_token(token, "RELATIONAL_OPERATOR");
-                else
-                    print_token(token, "RELATIONAL_OPERATOR");
+            if (c == '=' && d == '=') {
+                emit("==", "RELATIONAL_OPERATOR");
+            } else if (c == '!' && d == '=') {
+                emit("!=", "RELATIONAL_OPERATOR");
+            } else if (c == '<' && d == '=') {
+                emit("<=", "RELATIONAL_OPERATOR");
+            } else if (c == '>' && d == '=') {
+                emit(">=", "RELATIONAL_OPERATOR");
+            } else if (c == '&' && d == '&') {
+                emit("&&", "LOGICAL_OPERATOR");
+            } else if (c == '|' && d == '|') {
+                emit("||", "LOGICAL_OPERATOR");
             } else {
-                if (next != EOF)
-                    ungetc(next, input);
+                if (d != EOF) {
+                    ungetc(d, input);
+                }
 
-                if (c == '=')
-                    print_token(token, "ASSIGNMENT_OPERATOR");
-                else if (c == '!')
-                    print_token(token, "LOGICAL_OPERATOR");
-                else
-                    print_token(token, "RELATIONAL_OPERATOR");
+                if (c == '=') {
+                    emit("=", "ASSIGNMENT_OPERATOR");
+                } else if (c == '!') {
+                    emit("!", "LOGICAL_OPERATOR");
+                } else if (c == '<' || c == '>') {
+                    char op[2] = {(char)c, '\0'};
+                    emit(op, "RELATIONAL_OPERATOR");
+                } else {
+                    char op[2] = {(char)c, '\0'};
+                    emit(op, "UNKNOWN");
+                }
             }
             continue;
         }
 
-        /* Logical operators */
-        if (c == '&' || c == '|') {
-            int next = fgetc(input);
-
-            if (next == c) {
-                token[len++] = (char)next;
-                token[len] = '\0';
-
-                if (c == '&')
-                    print_token(token, "LOGICAL_OPERATOR");
-                else
-                    print_token(token, "LOGICAL_OPERATOR");
-            } else {
-                if (next != EOF)
-                    ungetc(next, input);
-
-                print_token(token, "UNKNOWN");
-            }
-            continue;
-        }
-
-        /* Arithmetic operators */
         if (c == '+' || c == '-' || c == '*' || c == '%') {
-            print_token(token, "ARITHMETIC_OPERATOR");
+            char op[2] = {(char)c, '\0'};
+            emit(op, "ARITHMETIC_OPERATOR");
             continue;
         }
 
-        /* Delimiters */
-        if (strchr("(){}[];,", c) != NULL) {
-            print_token(token, "DELIMITER");
+        if (c == '(' || c == ')' || c == '{' || c == '}' ||
+            c == '[' || c == ']' || c == ';' || c == ',') {
+            char delimiter[2] = {(char)c, '\0'};
+            emit(delimiter, "DELIMITER");
             continue;
         }
 
-        /* Any other character */
-        print_token(token, "UNKNOWN");
+        {
+            char unknown[2] = {(char)c, '\0'};
+            emit(unknown, "UNKNOWN");
+        }
+    }
+
+    if (ferror(input)) {
+        fprintf(stderr, "error: could not read input file\n");
+        fclose(input);
+        return 2;
     }
 
     fclose(input);
