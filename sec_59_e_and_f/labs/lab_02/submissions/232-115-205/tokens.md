@@ -2,15 +2,65 @@
 
 Replace STUDENT_ID and SECTION below.
 
-Student ID: STUDENT_ID
-Section: SECTION
+Student ID: 232-115-205
+Section: SECTION-F
 
 ## Token sequence for public.c
 
-Replace the contents of the following single text block. List every emitted
-lexeme and token in source order, including repeated occurrences. Omit comments
-and whitespace. Do not add a header row inside the block.
-
-```text
-REPLACE_WITH_YOUR_TOKEN_SEQUENCE
-```
+int,KEYWORD
+main,IDENTIFIER
+(,PUNCTUATION
+),PUNCTUATION
+{,PUNCTUATION
+int,KEYWORD
+steps,IDENTIFIER
+=,OPERATOR
+4,NUMBER
+;,PUNCTUATION
+int,KEYWORD
+result,IDENTIFIER
+=,OPERATOR
+1,NUMBER
+;,PUNCTUATION
+while,KEYWORD
+(,PUNCTUATION
+steps,IDENTIFIER
+>,OPERATOR
+1,NUMBER
+),PUNCTUATION
+{,PUNCTUATION
+result,IDENTIFIER
+=,OPERATOR
+result,IDENTIFIER
+*,OPERATOR
+steps,IDENTIFIER
+;,PUNCTUATION
+steps,IDENTIFIER
+=,OPERATOR
+steps,IDENTIFIER
+-,OPERATOR
+1,NUMBER
+;,PUNCTUATION
+},PUNCTUATION
+if,KEYWORD
+(,PUNCTUATION
+result,IDENTIFIER
+>=,OPERATOR
+24,NUMBER
+&&,OPERATOR
+steps,IDENTIFIER
+==,OPERATOR
+1,NUMBER
+),PUNCTUATION
+{,PUNCTUATION
+return,KEYWORD
+result,IDENTIFIER
+;,PUNCTUATION
+},PUNCTUATION
+else,KEYWORD
+{,PUNCTUATION
+return,KEYWORD
+0,NUMBER
+;,PUNCTUATION
+},PUNCTUATION
+},PUNCTUATION
