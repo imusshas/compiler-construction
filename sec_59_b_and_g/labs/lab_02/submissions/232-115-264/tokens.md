@@ -1,7 +1,7 @@
 # Lab 02 token inventory
 
-Student ID: STUDENT_ID
-Section: sec_59_b_and_g
+Student ID: 232-115-264
+Section: G
 
 ## Token sequence for public.c
 
