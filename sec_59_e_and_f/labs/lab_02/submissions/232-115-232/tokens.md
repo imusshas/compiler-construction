@@ -1,0 +1,72 @@
+# Lab 02 token inventory
+
+Replace STUDENT_ID and SECTION below.
+
+Student ID: 232-115-232
+Section: F
+
+## Token sequence for public.c
+
+Replace the contents of the following single text block. List every emitted
+lexeme and token in source order, including repeated occurrences. Omit comments
+and whitespace. Do not add a header row inside the block.
+
+```text
+int,KEYWORD
+main,IDENTIFIER
+(,DELIMITER
+),DELIMITER
+{,DELIMITER
+int,KEYWORD
+steps,IDENTIFIER
+=,ASSIGNMENT_OPERATOR
+4,INTEGER
+;,DELIMITER
+int,KEYWORD
+result,IDENTIFIER
+=,ASSIGNMENT_OPERATOR
+1,INTEGER
+;,DELIMITER
+while,KEYWORD
+(,DELIMITER
+steps,IDENTIFIER
+>,RELATIONAL_OPERATOR
+1,INTEGER
+),DELIMITER
+{,DELIMITER
+result,IDENTIFIER
+=,ASSIGNMENT_OPERATOR
+result,IDENTIFIER
+*,ARITHMETIC_OPERATOR
+steps,IDENTIFIER
+;,DELIMITER
+steps,IDENTIFIER
+=,ASSIGNMENT_OPERATOR
+steps,IDENTIFIER
+-,ARITHMETIC_OPERATOR
+1,INTEGER
+;,DELIMITER
+},DELIMITER
+if,KEYWORD
+(,DELIMITER
+result,IDENTIFIER
+>=,RELATIONAL_OPERATOR
+24,INTEGER
+&&,LOGICAL_OPERATOR
+steps,IDENTIFIER
+==,RELATIONAL_OPERATOR
+1,INTEGER
+),DELIMITER
+{,DELIMITER
+return,KEYWORD
+result,IDENTIFIER
+;,DELIMITER
+},DELIMITER
+else,KEYWORD
+{,DELIMITER
+return,KEYWORD
+0,INTEGER
+;,DELIMITER
+},DELIMITER
+},DELIMITER
+```
