@@ -1,0 +1,19 @@
+TOKEN        LEXEME
+KEYWORD      int
+IDENTIFIER   main
+SEPARATOR    (
+SEPARATOR    )
+SEPARATOR    {
+KEYWORD      int
+Error occurred at line 2
+OPERATOR     =
+NUMBER       10
+SEPARATOR    ;
+NUMBER       10
+OPERATOR     =
+IDENTIFIER   x
+SEPARATOR    ;
+KEYWORD      return
+NUMBER       0
+SEPARATOR    ;
+SEPARATOR    }
